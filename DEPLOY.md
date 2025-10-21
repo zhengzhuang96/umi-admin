@@ -10,12 +10,12 @@
 
 ### 2. 推送代码触发部署
 
-将代码推送到 `main` 分支后，GitHub Actions 会自动构建并部署到 GitHub Pages。
+将代码推送到 `master` 分支后，GitHub Actions 会自动构建并部署到 GitHub Pages。
 
 ```bash
 git add .
 git commit -m "feat: deploy to GitHub Pages"
-git push origin main
+git push origin master
 ```
 
 ### 3. 查看部署状态

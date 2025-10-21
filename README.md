@@ -93,7 +93,7 @@ npm run build
 ### 部署步骤
 
 1. 在 GitHub 仓库设置中启用 GitHub Pages（选择 GitHub Actions 作为源）
-2. 推送代码到 `main` 分支
+2. 推送代码到 `master` 分支
 3. GitHub Actions 会自动构建并部署
 4. 访问：`https://[你的用户名].github.io/umi-admin/`
 
