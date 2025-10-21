@@ -2,39 +2,96 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Divider } from 'antd';
 import {
   DashboardOutlined,
+  FileTextOutlined,
+  FileProtectOutlined,
+  CheckCircleOutlined,
+  EditOutlined,
   UserOutlined,
-  SettingOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined
 } from '@ant-design/icons';
-import { useLocation, useNavigate } from '@umijs/max';
+import { useLocation, useNavigate } from 'umi';
 import { useSnapshot } from 'valtio';
-import { layoutStore, layoutActions } from '@/stores/layout';
+import { layoutStore, layoutActions } from '../../../../stores/layout';
 import styles from './index.less';
 
 const { Sider } = Layout;
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
   const layout = useSnapshot(layoutStore);
+
+  // 根据当前路径自动展开对应的菜单项
+  useEffect(() => {
+    const path = location.pathname;
+    const keys: string[] = [];
+
+    // 检查是否在文档相关页面
+    if (path.startsWith('/documents')) {
+      keys.push('/documents');
+    }
+
+    // 检查是否在审批相关页面
+    if (path.startsWith('/approvals')) {
+      keys.push('/approvals');
+    }
+
+    setOpenKeys(keys);
+  }, [location.pathname]);
 
   const menuItems = [
     {
       key: '/dashboard',
       icon: <DashboardOutlined />,
-      label: '仪表盘',
+      label: '工作台',
     },
     {
-      key: '/users',
+      key: '/documents',
+      icon: <FileTextOutlined />,
+      label: '我的文档',
+      children: [
+        {
+          key: '/documents/all',
+          label: '全部文档',
+        },
+        {
+          key: '/documents/batch',
+          label: '批量文档',
+        },
+      ],
+    },
+    {
+      key: '/templates',
+      icon: <FileProtectOutlined />,
+      label: '我的模版',
+    },
+    {
+      key: '/approvals',
+      icon: <CheckCircleOutlined />,
+      label: '我的审批',
+      children: [
+        {
+          key: '/approvals/my-approvals',
+          label: '我审批的',
+        },
+        {
+          key: '/approvals/my-submissions',
+          label: '我提交的',
+        },
+      ],
+    },
+    {
+      key: '/signatures',
+      icon: <EditOutlined />,
+      label: '我的签名',
+    },
+    {
+      key: '/account',
       icon: <UserOutlined />,
-      label: '用户管理',
-    },
-    {
-      key: '/settings',
-      icon: <SettingOutlined />,
-      label: '系统设置',
+      label: '账号设置',
     },
   ];
 
@@ -64,10 +121,12 @@ const Sidebar: React.FC = () => {
       >
         {/* 菜单容器 - 可滚动 */}
         <div className={styles.menuContainer}>
-          {/* 菜单项 - 直接从仪表盘开始 */}
+          {/* 菜单项 - 直接从工作台开始 */}
           <Menu
             mode="inline"
             selectedKeys={[location.pathname]}
+            openKeys={openKeys}
+            onOpenChange={setOpenKeys}
             items={menuItems}
             onClick={(info) => {
               handleMenuClick(info);

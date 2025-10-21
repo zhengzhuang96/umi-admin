@@ -86,6 +86,19 @@ pnpm build
 npm run build
 ```
 
+## GitHub Pages 部署
+
+项目已配置 GitHub Actions 自动部署到 GitHub Pages。
+
+### 部署步骤
+
+1. 在 GitHub 仓库设置中启用 GitHub Pages（选择 GitHub Actions 作为源）
+2. 推送代码到 `main` 分支
+3. GitHub Actions 会自动构建并部署
+4. 访问：`https://[你的用户名].github.io/umi-admin/`
+
+详细部署说明请查看 [DEPLOY.md](./DEPLOY.md)
+
 ## 使用说明
 
 ### 登录系统
