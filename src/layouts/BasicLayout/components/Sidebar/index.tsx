@@ -7,10 +7,11 @@ import {
   CheckCircleOutlined,
   EditOutlined,
   UserOutlined,
+  SettingOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined
 } from '@ant-design/icons';
-import { useLocation, useNavigate } from 'umi';
+import { useLocation, useNavigate, useIntl } from 'umi';
 import { useSnapshot } from 'valtio';
 import { layoutStore, layoutActions } from '../../../../stores/layout';
 import styles from './index.less';
@@ -18,6 +19,7 @@ import styles from './index.less';
 const { Sider } = Layout;
 
 const Sidebar: React.FC = () => {
+  const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
@@ -46,52 +48,57 @@ const Sidebar: React.FC = () => {
     {
       key: '/dashboard',
       icon: <DashboardOutlined />,
-      label: '工作台',
+      label: intl.formatMessage({ id: 'menu.dashboard' }),
     },
     {
       key: '/documents',
       icon: <FileTextOutlined />,
-      label: '我的文档',
+      label: intl.formatMessage({ id: 'menu.documents' }),
       children: [
         {
           key: '/documents/all',
-          label: '全部文档',
+          label: intl.formatMessage({ id: 'menu.documents.all' }),
         },
         {
           key: '/documents/batch',
-          label: '批量文档',
+          label: intl.formatMessage({ id: 'menu.documents.batch' }),
         },
       ],
     },
     {
       key: '/templates',
       icon: <FileProtectOutlined />,
-      label: '我的模版',
+      label: intl.formatMessage({ id: 'menu.templates' }),
     },
     {
       key: '/approvals',
       icon: <CheckCircleOutlined />,
-      label: '我的审批',
+      label: intl.formatMessage({ id: 'menu.approvals' }),
       children: [
         {
           key: '/approvals/my-approvals',
-          label: '我审批的',
+          label: intl.formatMessage({ id: 'menu.approvals.my' }),
         },
         {
           key: '/approvals/my-submissions',
-          label: '我提交的',
+          label: intl.formatMessage({ id: 'menu.approvals.submissions' }),
         },
       ],
     },
     {
       key: '/signatures',
       icon: <EditOutlined />,
-      label: '我的签名',
+      label: intl.formatMessage({ id: 'menu.signatures' }),
     },
     {
       key: '/account',
       icon: <UserOutlined />,
-      label: '账号设置',
+      label: intl.formatMessage({ id: 'menu.account' }),
+    },
+    {
+      key: '/settings',
+      icon: <SettingOutlined />,
+      label: intl.formatMessage({ id: 'page.settings.title' }),
     },
   ];
 

@@ -1,85 +1,54 @@
 import { defineConfig } from '@umijs/max';
+import { routes } from './src/config/routes';
 
 export default defineConfig({
+  // 插件配置
   antd: {},
   access: {},
   model: {},
   initialState: {},
   request: {},
+
+  // 布局配置
   layout: false,
+
+  // 部署配置
   base: process.env.NODE_ENV === 'production' ? '/umi-admin/' : '/',
   publicPath: process.env.NODE_ENV === 'production' ? '/umi-admin/' : '/',
-  routes: [
-    {
-      path: '/login',
-      component: './Login',
-      layout: false,
-    },
-    {
-      path: '/',
-      component: '@/layouts/BasicLayout',
-      routes: [
-        {
-          path: '/',
-          redirect: '/dashboard',
-        },
-        {
-          name: '工作台',
-          path: '/dashboard',
-          component: './Dashboard',
-        },
-        {
-          name: '我的文档',
-          path: '/documents',
-          component: './Documents',
-          routes: [
-            {
-              name: '全部文档',
-              path: '/documents/all',
-              component: './Documents/AllDocuments',
-            },
-            {
-              name: '批量文档',
-              path: '/documents/batch',
-              component: './Documents/BatchDocuments',
-            },
-          ],
-        },
-        {
-          name: '我的模版',
-          path: '/templates',
-          component: './Templates',
-        },
-        {
-          name: '我的审批',
-          path: '/approvals',
-          component: './Approvals',
-          routes: [
-            {
-              name: '我审批的',
-              path: '/approvals/my-approvals',
-              component: './Approvals/MyApprovals',
-            },
-            {
-              name: '我提交的',
-              path: '/approvals/my-submissions',
-              component: './Approvals/MySubmissions',
-            },
-          ],
-        },
-        {
-          name: '我的签名',
-          path: '/signatures',
-          component: './Signatures',
-        },
-        {
-          name: '账号设置',
-          path: '/account',
-          component: './Account',
-        },
-      ],
-    },
-  ],
+
+  // 路由配置
+  routes,
+
+  // 包管理器
   npmClient: 'pnpm',
+
+  // CSS框架
   tailwindcss: {},
+
+  // 国际化配置
+  locale: {
+    default: 'zh-CN',
+    antd: true,
+    baseNavigator: true,
+    title: false,
+  },
+
+  // 主题配置
+  theme: {
+    'primary-color': '#1890ff',
+  },
+
+  // 代理配置（开发环境）
+  proxy: {
+    '/api': {
+      target: 'http://localhost:8000',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' },
+    },
+  },
+
+  // 构建配置
+  mfsu: {
+    strategy: 'normal',
+  },
 });

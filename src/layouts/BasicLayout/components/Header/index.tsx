@@ -1,44 +1,44 @@
 import React from 'react';
-import { Layout, Dropdown, Avatar, Space, Typography, Button } from 'antd';
+import { Layout, Dropdown, Avatar, Space, Typography, Button, Popover } from 'antd';
 import {
   UserOutlined,
   LogoutOutlined,
   SettingOutlined,
   DownOutlined,
-  MenuOutlined
+  MenuOutlined,
+  BgColorsOutlined
 } from '@ant-design/icons';
-import { useNavigate, useModel } from '@umijs/max';
+import { useIntl } from 'umi';
 import { useSnapshot } from 'valtio';
-import { authAPI } from '@/services/api';
 import { layoutActions, layoutStore } from '@/stores/layout';
+import configManager, { appName } from '@/utils/config';
+import LanguageSwitch from '@/components/LanguageSwitch';
+import ThemeColorPicker from '@/components/ThemeColorPicker';
 import styles from './index.less';
 
 const { Header: AntHeader } = Layout;
 const { Text } = Typography;
 
 const Header: React.FC = () => {
-  const navigate = useNavigate();
-  const { initialState } = useModel('@@initialState');
-  const userInfo = initialState?.userInfo;
+  const intl = useIntl();
   const layout = useSnapshot(layoutStore);
 
-  const handleLogout = async () => {
-    try {
-      await authAPI.logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('退出失败:', error);
-      navigate('/login');
-    }
+  const handleLogout = () => {
+    // 清除本地存储的token
+    localStorage.removeItem('token');
+    // 跳转到登录页
+    window.location.href = '/login';
   };
 
   const handleMenuClick = (key: string) => {
     switch (key) {
       case 'profile':
         // 跳转到个人中心
+        window.location.href = '/account';
         break;
       case 'settings':
         // 跳转到设置页面
+        window.location.href = '/settings';
         break;
       case 'logout':
         handleLogout();
@@ -52,12 +52,12 @@ const Header: React.FC = () => {
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: '个人中心',
+      label: intl.formatMessage({ id: 'header.profile' }),
     },
     {
       key: 'settings',
       icon: <SettingOutlined />,
-      label: '系统设置',
+      label: intl.formatMessage({ id: 'header.settings' }),
     },
     {
       type: 'divider' as const,
@@ -65,7 +65,7 @@ const Header: React.FC = () => {
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: '退出登录',
+      label: intl.formatMessage({ id: 'header.logout' }),
       danger: true,
     },
   ];
@@ -83,36 +83,53 @@ const Header: React.FC = () => {
             onClick={layoutActions.toggleSidebar}
           />
           <div className={styles.logoIcon}>
-            <span className={styles.logoText}>Umi</span>
+            <span className={styles.logoText}>{appName.substring(0, 3)}</span>
           </div>
-          <span className={styles.logoTitle}>Admin</span>
+          <span className={styles.logoTitle}>{appName}</span>
         </div>
 
         {/* 用户信息区域 */}
         <div className={styles.userInfo}>
-          <Dropdown
-            menu={{
-              items: userMenuItems,
-              onClick: ({ key }) => handleMenuClick(key),
-            }}
-            placement="bottomRight"
-            trigger={['click']}
-          >
-            <div className={styles.userDropdown}>
-              <Space>
-                <Avatar
-                  size="small"
-                  src={userInfo?.avatar}
-                  icon={<UserOutlined />}
-                  className={styles.avatar}
-                />
-                <Text className={styles.userName}>
-                  {userInfo?.name || '用户'}
-                </Text>
-                <DownOutlined className={styles.dropdownIcon} />
-              </Space>
-            </div>
-          </Dropdown>
+          <Space size="middle">
+            {/* 主题色切换 */}
+            <Popover
+              content={<ThemeColorPicker />}
+              title={intl.formatMessage({ id: 'theme.colorPicker' })}
+              trigger="click"
+              placement="bottomRight"
+            >
+              <Button type="text" icon={<BgColorsOutlined />}>
+                {intl.formatMessage({ id: 'theme.title' })}
+              </Button>
+            </Popover>
+
+            {/* 语言切换 */}
+            <LanguageSwitch />
+
+            {/* 用户下拉菜单 */}
+            <Dropdown
+              menu={{
+                items: userMenuItems,
+                onClick: ({ key }) => handleMenuClick(key),
+              }}
+              placement="bottomRight"
+              trigger={['click']}
+            >
+              <div className={styles.userDropdown}>
+                <Space>
+                  <Avatar
+                    size="small"
+                    icon={<UserOutlined />}
+                    className={styles.avatar}
+                  />
+                  <Text className={styles.userName}>
+                    {intl.formatMessage({ id: 'user.admin' })}
+                  </Text>
+                  <DownOutlined className={styles.dropdownIcon} />
+                </Space>
+              </div>
+            </Dropdown>
+          </Space>
         </div>
       </div>
     </AntHeader>
